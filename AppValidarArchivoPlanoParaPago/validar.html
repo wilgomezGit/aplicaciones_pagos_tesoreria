@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validador de Archivo de Texto</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="local.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Botón para ir a la página principal -->
+        <button id="homeButton" class="btn btn-home" onclick="goToHome()">&laquo; Página Inicio</button>
+
+        <h1>Validador de Archivo de Texto</h1>
+
+        <!-- Sección de carga del archivo -->
+        <div class="file-container">
+            <label class="file-label">
+                📂 Elegir archivo
+                <input type="file" id="fileInput" accept=".txt">
+            </label>
+
+            <div id="fileName" class="file-name">
+                No hay archivos seleccionados
+            </div>
+        </div>
+
+
+        <!-- Botones con espacio adecuado -->
+        <div class="buttons">
+            <button id="processButton" class="btn-success" disabled>Aceptar</button>
+            <button id="clearButton" class="btn-danger">Cancelar</button>
+        </div>
+
+        <h2>Resultados de la Validación</h2>
+
+        <!-- Mensaje de validación (éxito o error) -->
+        <div id="validationMessage"></div>
+
+        <!-- Caja para mostrar los resultados -->
+        <pre id="output" class="output"></pre>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>Copyright © | Popayán 2025</p>
+            <p>Tesorería Comfacauca</p>
+            <p class="signature">Desarrollo: Wilmar Andrés Gómez</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

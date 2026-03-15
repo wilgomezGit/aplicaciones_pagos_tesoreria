@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesar Archivo para Cuentas Bancarias</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+    	<!-- Botón para ir a la página principal -->
+		<button id="homeButton" class="btn btn-home" onclick="goToHome()">&laquo Pagina Inicio</button>
+
+        <h1>PROCESAR ARCHIVO PARA CUENTAS BANCARIAS</h1>
+
+        <!-- Sección de carga del archivo -->
+        <div class="upload-section">
+            <label class="file-label">
+                📂 Elegir archivos
+                <input type="file" id="fileInput" multiple accept=".txt">
+            </label>
+            <div class="file-name" id="fileCount">
+                No hay archivos seleccionados
+            </div>
+        </div>
+
+        <!-- Botones con espacio adecuado -->
+        <div class="buttons">
+            <button id="acceptButton" onclick="processFile()">Aceptar</button>
+            <button id="exportButton" class="btn" onclick="exportToExcel()" disabled>Exportar a Excel</button>
+            <button id="cancelButton" class="btn btn-danger" onclick="clearData()" disabled>Cancelar</button>
+        </div>
+
+        <h2>Datos Procesados de las Cuentas Bancarias</h2>
+        <div class="table-container">
+            <table id="dataTable" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>No. Documento</th>
+                        <th>Nombre Titular</th>
+                        <th>No. Cuenta</th>
+                        <th>Nombre Banco</th>
+                        <th>Tipo Cuenta A/C</th>
+                        <th>Tipo Documento</th>
+                    </tr>
+                </thead>
+                <tbody id="dataBody">
+                    <!-- Aquí se mostrarán los datos procesados -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>Copyright © | Popayán 2025</p>
+            <p>Tesorería Comfacauca</p>
+            <p class="signature">Desarrollo Wilmar Andrés Gómez</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.2/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+/* ==========================
+   ESTILOS GENERALES
+   ========================== */
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 30px;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-image: url('imagen/fondo.jpg');
+    background-repeat: repeat;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+/* ==========================
+   CONTENEDOR PRINCIPAL
+   ========================== */
+
+.container {
+    width: 100%;
+    max-width: 1300px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ==========================
+   SECCIÓN ARCHIVO
+   ========================== */
+
+.file-container {
+    width: 40%;
+    background: #f8f9fa;
+    border: 2px dashed #3498db;
+    border-radius: 10px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.file-label {
+    display: inline-block;
+    background: #3498db;
+    color: #ffffff;
+    padding: 12px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.file-label:hover {
+    background: #2c80b4;
+}
+
+.file-label input {
+    display: none;
+}
+
+.file-name {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #555;
+    font-style: italic;
+}
+
+/* ==========================
+   BOTONES MODERNOS
+   ========================== */
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    width: 170px;
+    transition: all 0.25s ease;
+    transform: scale(1);
+}
+
+/* EFECTO SALTO */
+button:hover:not(:disabled) {
+    transform: scale(1.08);
+}
+
+/* EFECTO CLICK */
+button:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+/* ===== ACEPTAR ===== */
+#processButton {
+    background-color: #28a745;
+}
+
+#processButton:hover:not(:disabled) {
+    background-color: #218838;
+}
+
+/* ===== EXPORTAR NORMAL ===== */
+#exportButton {
+    background-color: #007BFF;
+}
+
+/* ===== EXPORTAR ACTIVO AZUL ILUMINADO ===== */
+.active-export {
+    background: linear-gradient(135deg, #007bff, #00c6ff) !important;
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.7);
+}
+
+.active-export:hover {
+    box-shadow: 0 0 25px rgba(0, 123, 255, 1);
+}
+
+/* ===== CANCELAR ===== */
+#cancelButton {
+    background-color: #dc3545;
+}
+
+#cancelButton:hover:not(:disabled) {
+    background-color: #c82333;
+}
+
+/* ===== BOTÓN DESHABILITADO ===== */
+button:disabled {
+    background-color: #CCCCCC !important;
+    cursor: not-allowed;
+    transform: scale(1);
+    box-shadow: none;
+}
+
+/* ==========================
+   TABLA
+   ========================== */
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    max-width: 100%;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+th {
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    padding: 6px;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 6px;
+    text-align: center;
+    white-space: nowrap;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #e3f2fd;
+}
+
+/* ==========================
+   BOTÓN INICIO
+   ========================== */
+
+.btn-home {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+}
+
+.btn-home:hover {
+    background-color: #45a049;
+    transform: scale(1.08);
+}
+
+/* ==========================
+   FOOTER
+   ========================== */
+
+footer {
+    background-color: #f1f1f1;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    font-size: 13px;
+    font-style: italic;
+    position: relative;
+    margin-top: auto;
+}
+
+footer::before {
+    content: "";
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(to right, transparent, #3498db, #00b8d9, transparent);
+    margin-bottom: 6px;
+    border-radius: 2px;
+}
+
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+footer p {
+    margin: 0;
+    color: #333;
+}
