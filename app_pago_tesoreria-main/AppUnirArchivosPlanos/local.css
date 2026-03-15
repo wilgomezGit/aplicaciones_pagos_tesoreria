@@ -1,0 +1,45 @@
+/* Estilos específicos – Unir Archivos Planos */
+
+.result-section {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 25px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.download-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 14px 26px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #007bff;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.download-link:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.file-list li {
+    padding: 10px;
+    border-bottom: 1px solid #eeeeee;
+    font-size: 14px;
+    color: #333;
+}
+
+.file-list li:last-child {
+    border-bottom: none;
+}

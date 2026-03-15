@@ -1,0 +1,47 @@
+/* Estilos específicos – Validar Archivo Plano para Pago */
+
+.output {
+    margin-top: 20px;
+    white-space: pre-wrap;
+    text-align: left;
+    background: #f8f9fa;
+    padding: 15px;
+    width: 90%;
+    border-radius: 5px;
+    min-height: 120px;
+    max-width: 1200px;
+    overflow-x: auto;
+    font-size: 15px;
+    line-height: 1.8;
+    border: 1px solid #ccc;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #d9534f;
+    display: block;
+    margin-bottom: 8px;
+}
+
+#validationMessage,
+.success-message,
+.error-message {
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.success-message {
+    color: #28a745;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.error-message {
+    color: #d9534f;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}

@@ -1,0 +1,234 @@
+/* Estilos Generales */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 30px;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-image: url('imagen/fondo.jpg'); /* Cambia esto a la ruta de tu imagen */
+    background-repeat: repeat; /* Repite la imagen en mosaico */
+
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+/* Contenedor principal */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ==========================
+   SECCIÓN CARGA DE ARCHIVOS
+   ========================== */
+.upload-section {
+    width: 40%;
+    background: #f8f9fa;
+    border: 2px dashed #3498db;
+    border-radius: 10px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.file-label {
+    display: inline-block;
+    background: #3498db;
+    color: #ffffff;
+    padding: 12px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.file-label:hover {
+    background: #2c80b4;
+}
+
+.file-label input {
+    display: none;
+}
+
+.file-name {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #555;
+    font-style: italic;
+}
+
+
+/* ==========================
+   BOTONES
+========================== */
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    width: 160px;
+    transition: all 0.3s ease;
+}
+
+/* Estado deshabilitado */
+button:disabled {
+    background-color: #CCCCCC !important;
+    cursor: not-allowed;
+}
+
+/* ==========================
+   COLORES INDIVIDUALES
+========================== */
+
+button#acceptButton {
+    background-color: #28a745;
+}
+
+button#exportButton {
+    background-color: #007BFF;
+}
+
+button#cancelButton {
+    background-color: #dc3545;
+}
+
+/* ==========================
+   HOVER INDIVIDUAL
+========================== */
+
+button#acceptButton:hover:not(:disabled) {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+button#exportButton:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+button#cancelButton:hover:not(:disabled) {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+
+/* Tabla */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    max-width: 100%;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+th {
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    font-size: 13px;
+    padding: 6px;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 6px;
+    text-align: center;
+    white-space: nowrap;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #dff0d8;
+}
+
+.btn-home {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 10px;
+    position: absolute;
+    left: 20px; /* Alineado a la izquierda */
+    top: 20px; /* Ajusta la posición según necesites */
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Espacio entre la flecha y el texto */
+}
+
+.btn-home:hover {
+    background-color: #45a049;
+}
+
+footer {
+    background-color: #f1f1f1;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    font-size: 13px;
+    font-style: italic;
+    position: relative;
+    margin-top: auto; /* empuja hacia abajo */
+}
+
+/* Línea de separación degradada azul */
+footer::before {
+    content: "";
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(to right, transparent, #3498db, #00b8d9, transparent);
+    margin-bottom: 6px;
+    border-radius: 2px;
+}
+
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+footer p {
+    margin: 0;
+    color: #333;
+}
