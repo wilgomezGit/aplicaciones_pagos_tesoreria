@@ -3,11 +3,15 @@
    ================================================
    Flujo: Cargar .txt → Parsear → Tabla editable
           → Descargar Excel / Siesa / Plano
+
+   MODIFICACIÓN: Ahora soporta Excel Simple y Siesa
+   + Búsqueda flexible de bancos
    ================================================ */
 
 let parsedData = [];
 let hasErrors = false;
 let isExcelMode = false;
+let excelType = null; // 'simple' o 'siesa'
 
 /* ========================================
    ELEMENTOS DEL DOM
@@ -176,6 +180,148 @@ const bancoSiesaData = {
 };
 
 /* ========================================
+   BÚSQUEDA FLEXIBLE DE BANCOS
+   ======================================== */
+function findBancoFlexible(bancoIngresado) {
+    const bancoLower = bancoIngresado.toLowerCase().trim();
+
+    // Primero busca coincidencia exacta
+    if (bancoSiesaData[bancoIngresado]) {
+        return bancoSiesaData[bancoIngresado];
+    }
+
+    // Si no encuentra exacta, busca parcial (flexible)
+    for (let nombreExacto in bancoSiesaData) {
+        const nombreLower = nombreExacto.toLowerCase();
+
+        // Busca si el nombre ingresado está contenido en el nombre exacto
+        // O viceversa (para capturar abreviaciones)
+        if (nombreLower.includes(bancoLower) || bancoLower.includes(nombreLower)) {
+            return bancoSiesaData[nombreExacto];
+        }
+    }
+
+    // Si sigue sin encontrar, busca palabras clave
+    const palabras = bancoLower.split(' ').filter(p => p.length > 2);
+    for (let nombreExacto in bancoSiesaData) {
+        const nombreLower = nombreExacto.toLowerCase();
+
+        // Si al menos 2 palabras coinciden, es probable que sea el mismo banco
+        let coincidencias = 0;
+        palabras.forEach(palabra => {
+            if (nombreLower.includes(palabra)) {
+                coincidencias++;
+            }
+        });
+
+        if (coincidencias >= 2) {
+            return bancoSiesaData[nombreExacto];
+        }
+    }
+
+    // No encontró nada
+    return { banco: 'ERROR', dato3: '000000000' };
+}
+
+/* ========================================
+   DETECTAR TIPO DE EXCEL
+   ======================================== */
+function detectExcelType(headers) {
+    // Detectar si es Formato Siesa (tiene estas columnas específicas)
+    const siesaHeaders = [
+        'Código del proveedor',
+        'Banco del proveedor',
+        'Número de cuenta corriente o de ahorros',
+        'Tipo de cuenta 1=cta cte 2=cta ahorro'
+    ];
+
+    const isSiesa = siesaHeaders.every(header => headers.includes(header));
+
+    if (isSiesa) {
+        return 'siesa';
+    } else {
+        return 'simple';
+    }
+}
+
+/* ========================================
+   TRANSFORMAR EXCEL SIMPLE A SIESA
+   ======================================== */
+function transformSimpleExcelToSiesa(jsonData, headers) {
+    // Transforma datos de Excel Simple a estructura Siesa internamente
+    // Función flexible que acepta diferentes nombres de columnas
+
+    // Buscar qué columnas existen (sin importar mayúsculas/minúsculas)
+    const findColumn = (row, possibleNames) => {
+        for (let name of possibleNames) {
+            for (let key in row) {
+                if (key.toUpperCase().trim() === name.toUpperCase().trim()) {
+                    return row[key];
+                }
+            }
+        }
+        return '';
+    };
+
+    let transformedData = [];
+    let hasErrors = false;
+
+    jsonData.forEach((row) => {
+        // Buscar las columnas con múltiples variaciones de nombres
+        const noDocumento = findColumn(row, ['NUMERO DOCUMENTO', 'No. Documento', 'NO. DOCUMENTO', 'Número Documento']);
+        const noCuenta = findColumn(row, ['NUMERO DE CUENTA', 'No. Cuenta', 'NO. CUENTA', 'Número de Cuenta']);
+        const bancoNombre = findColumn(row, ['NOMBRE BANCO', 'Nombre Banco', 'BANCO']);
+        const tipoDocumento = findColumn(row, ['TIPO DOC', 'Tipo Documento', 'TIPO DOCUMENTO', 'Tipo Doc']);
+        const tipoCuentaTexto = findColumn(row, ['TIPO CUENTA', 'Tipo Cuenta', 'TIPO CUENTA']);
+
+        if (!noDocumento || !noCuenta || !bancoNombre) return;
+
+        // BÚSQUEDA FLEXIBLE DE BANCOS
+        const bancoInfo = findBancoFlexible(bancoNombre.toString().trim());
+
+        const tipoCuenta = tipoCuentaTexto.toUpperCase() === 'AHORROS' ? '2' :
+                          tipoCuentaTexto.toUpperCase() === 'CORRIENTE' ? '1' : 'ERROR';
+
+        let dato2 = 'ERROR';
+        if (tipoDocumento.toUpperCase() === 'CÉDULA CIUDADANÍA') dato2 = '1';
+        else if (tipoDocumento.toUpperCase() === 'NIT') dato2 = '3';
+        else if (tipoDocumento.toUpperCase() === 'CÉDULA EXTRANJERÍA') dato2 = '2';
+
+        const dato6 = tipoCuentaTexto.toUpperCase() === 'AHORROS' ? '37' :
+                     tipoCuentaTexto.toUpperCase() === 'CORRIENTE' ? '27' : 'ERROR';
+
+        if (bancoInfo.banco === 'ERROR' || tipoCuenta === 'ERROR' || dato2 === 'ERROR') {
+            hasErrors = true;
+        }
+
+        // Crear objeto con estructura Siesa
+        const rowData = {
+            'Código del proveedor': noDocumento.toString().trim(),
+            'Sucursal del proveedor': '001',
+            'Banco del proveedor': bancoInfo.banco,
+            'Número de cuenta corriente o de ahorros': noCuenta.toString().trim(),
+            'Tipo de cuenta 1=cta cte 2=cta ahorro': tipoCuenta,
+            'formato': '00000509',
+            'forma de pago': '1',
+            'Cuenta por defecto 0= cta reg. no es default, 1=cta reg. es default': '1',
+            'DATO 1': noDocumento.toString().trim(),
+            'DATO 2': dato2,
+            'DATO 3': bancoInfo.dato3,
+            'DATO 4': noCuenta.toString().trim(),
+            'DATO 5': '',
+            'DATO 6': dato6,
+            'DATO 7': '',
+            'DATO 8': '00000',
+            'hasError': bancoInfo.banco === 'ERROR' || tipoCuenta === 'ERROR' || dato2 === 'ERROR'
+        };
+
+        transformedData.push(rowData);
+    });
+
+    return transformedData;
+}
+
+/* ========================================
    PROCESAR ARCHIVO
    ======================================== */
 function processFile() {
@@ -189,14 +335,14 @@ function processFile() {
     const isExcelFile = fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.endsWith('.ods');
 
     const reader = new FileReader();
-    
+
     if (isExcelFile) {
         reader.onload = function(e) {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: "array" });
             const firstSheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[firstSheetName];
-            
+
             // Get headers from Excel
             const range = XLSX.utils.decode_range(worksheet["!ref"]);
             let headers = [];
@@ -204,7 +350,7 @@ function processFile() {
                 let cell = worksheet[XLSX.utils.encode_cell({ r: range.s.r, c: C })];
                 headers.push(cell ? cell.v : `Columna ${C}`);
             }
-            
+
             const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
             parseExcelFile(jsonData, headers);
         };
@@ -219,7 +365,7 @@ function processFile() {
 }
 
 /* ========================================
-   PARSEAR CONTENIDO DEL ARCHIVO
+   PARSEAR CONTENIDO DEL ARCHIVO PLANO
    ======================================== */
 function parseFile(content) {
     const rows = content.split('\n');
@@ -227,6 +373,7 @@ function parseFile(content) {
     parsedData = [];
     hasErrors = false;
     isExcelMode = false;
+    excelType = null;
 
     rows.forEach((line, index) => {
         const columns = line.split(',');
@@ -271,55 +418,106 @@ function parseFile(content) {
 }
 
 /* ========================================
-   PARSEAR CONTENIDO DEL EXCEL SIESA
+   PARSEAR CONTENIDO DEL EXCEL
    ======================================== */
 function parseExcelFile(jsonData, headers) {
     dataBody.innerHTML = '';
-    parsedData = jsonData;
     hasErrors = false;
     isExcelMode = true;
-    
+
     // Validamos si tiene datos
-    if(parsedData.length === 0) {
+    if(jsonData.length === 0) {
         alert("El archivo Excel está vacío.");
         return;
     }
 
-    // Mapeo opcional para que los títulos se vean mejor en pantalla
-    const excelHeaderAliases = {
-        'Código del proveedor': 'Código Proveedor',
-        'Sucursal del proveedor': 'Sucursal',
-        'Banco del proveedor': 'Banco',
-        'Número de cuenta corriente o de ahorros': 'Número Cuenta',
-        'Tipo de cuenta 1=cta cte 2=cta ahorro': 'Tipo Cuenta',
-        'formato': 'Formato',
-        'forma de pago': 'Forma Pago',
-        'Cuenta por defecto 0= cta reg. no es default, 1=cta reg. es default': 'Cuenta Defecto',
-        'DATO 1': 'DATO 1',
-        'DATO 2': 'DATO 2',
-        'DATO 3': 'DATO 3',
-        'DATO 4': 'DATO 4',
-        'DATO 5': 'DATO 5',
-        'DATO 6': 'DATO 6',
-        'DATO 7': 'DATO 7',
-        'DATO 8': 'DATO 8'
-    };
+    // DETECTAR TIPO DE EXCEL
+    excelType = detectExcelType(headers);
 
-    // Configurar encabezados dinámicamente
-    dataHead.innerHTML = '';
-    const headerRow = document.createElement('tr');
-    headers.forEach(h => {
-        const th = document.createElement('th');
-        // Usa el alias más corto si existe, de lo contrario usa el original
-        th.textContent = excelHeaderAliases[h] || h;
-        headerRow.appendChild(th);
-    });
-    // Agregar columna de acciones para el Excel también
-    const thA = document.createElement('th');
-    thA.textContent = "Acciones";
-    headerRow.appendChild(thA);
-    dataHead.appendChild(headerRow);
-    
+    console.log('Tipo de Excel detectado:', excelType);
+    console.log('Headers:', headers);
+
+    // SI ES EXCEL SIMPLE, TRANSFORMAR A SIESA
+    if (excelType === 'simple') {
+        console.log('Transformando Excel Simple a Siesa...');
+        parsedData = transformSimpleExcelToSiesa(jsonData, headers);
+
+        // Validar que la transformación funcionó
+        if (parsedData.length === 0) {
+            alert("No se pudo procesar el archivo. Verifica que tenga las columnas correctas:\n- No. Documento o Número Documento\n- No. Cuenta o Número de Cuenta\n- Nombre Banco\n- Tipo Cuenta\n- Tipo Documento o Tipo Doc");
+            return;
+        }
+
+        // Mostrar en tabla con headers Siesa
+        dataHead.innerHTML = '';
+        const headerRow = document.createElement('tr');
+        const siesaHeaders = [
+            'Documento',
+            'Cod. Sucursal',
+            'Cod. Banco',
+            'No. Cuenta',
+            'Cod. Tipo Cuenta',
+            'Formato',
+            'Cod. Pago',
+            'Cuenta X Defecto',
+            'DATO 1',
+            'DATO 2',
+            'DATO 3',
+            'DATO 4',
+            'DATO 5',
+            'DATO 6',
+            'DATO 7',
+            'DATO 8',
+            'Acciones'
+        ];
+
+        siesaHeaders.forEach(h => {
+            const th = document.createElement('th');
+            th.textContent = h;
+            headerRow.appendChild(th);
+        });
+        dataHead.appendChild(headerRow);
+
+    } else {
+        // ES EXCEL SIESA, PROCESARLO COMO ANTES
+        console.log('Procesando Excel Siesa...');
+        parsedData = jsonData;
+
+        // Mapeo opcional para que los títulos se vean mejor en pantalla
+        const excelHeaderAliases = {
+            'Código del proveedor': 'Código Proveedor',
+            'Sucursal del proveedor': 'Sucursal',
+            'Banco del proveedor': 'Banco',
+            'Número de cuenta corriente o de ahorros': 'Número Cuenta',
+            'Tipo de cuenta 1=cta cte 2=cta ahorro': 'Tipo Cuenta',
+            'formato': 'Formato',
+            'forma de pago': 'Forma Pago',
+            'Cuenta por defecto 0= cta reg. no es default, 1=cta reg. es default': 'Cuenta Defecto',
+            'DATO 1': 'DATO 1',
+            'DATO 2': 'DATO 2',
+            'DATO 3': 'DATO 3',
+            'DATO 4': 'DATO 4',
+            'DATO 5': 'DATO 5',
+            'DATO 6': 'DATO 6',
+            'DATO 7': 'DATO 7',
+            'DATO 8': 'DATO 8'
+        };
+
+        // Configurar encabezados dinámicamente
+        dataHead.innerHTML = '';
+        const headerRow = document.createElement('tr');
+        headers.forEach(h => {
+            const th = document.createElement('th');
+            th.textContent = excelHeaderAliases[h] || h;
+            headerRow.appendChild(th);
+        });
+        // Agregar columna de acciones
+        const thA = document.createElement('th');
+        thA.textContent = "Acciones";
+        headerRow.appendChild(thA);
+        dataHead.appendChild(headerRow);
+    }
+
     renderTable();
     showDownloadButtons();
 }
@@ -345,7 +543,7 @@ function renderTable() {
                 <th>Acciones</th>
             </tr>
         `;
-        
+
         parsedData.forEach((row, idx) => {
             if (row.hasError) hasErrors = true;
 
@@ -366,22 +564,69 @@ function renderTable() {
             dataBody.appendChild(tr);
         });
     } else {
-        // Renderizar Excel
-        let headers = Object.keys(parsedData[0] || {});
-        parsedData.forEach((row, idx) => {
-            const tr = document.createElement('tr');
-            headers.forEach(header => {
-                const td = document.createElement('td');
-                td.textContent = row[header] !== undefined ? row[header] : "";
-                tr.appendChild(td);
+        // Renderizar Excel (Simple o Siesa)
+        if (excelType === 'simple') {
+            // Excel Simple transformado a Siesa
+            const siesaHeaders = [
+                'Código del proveedor',
+                'Sucursal del proveedor',
+                'Banco del proveedor',
+                'Número de cuenta corriente o de ahorros',
+                'Tipo de cuenta 1=cta cte 2=cta ahorro',
+                'formato',
+                'forma de pago',
+                'Cuenta por defecto 0= cta reg. no es default, 1=cta reg. es default',
+                'DATO 1',
+                'DATO 2',
+                'DATO 3',
+                'DATO 4',
+                'DATO 5',
+                'DATO 6',
+                'DATO 7',
+                'DATO 8'
+            ];
+
+            parsedData.forEach((row, idx) => {
+                if (row.hasError) hasErrors = true;
+
+                const tr = document.createElement('tr');
+                if (row.hasError) tr.classList.add('row-error');
+
+                siesaHeaders.forEach(header => {
+                    const td = document.createElement('td');
+                    const value = row[header] || '';
+                    const style = (value === 'ERROR' || value === '000000000')
+                        ? 'style="background:#ff4d4d;color:white;font-weight:bold;"'
+                        : '';
+                    td.innerHTML = `<span ${style}>${value}</span>`;
+                    tr.appendChild(td);
+                });
+
+                // Acciones
+                const tdA = document.createElement('td');
+                tdA.innerHTML = `<button class="btn-delete-row" onclick="deleteRow(${idx})">🗑️ Eliminar</button>`;
+                tr.appendChild(tdA);
+
+                dataBody.appendChild(tr);
             });
-            // Acciones
-            const tdA = document.createElement('td');
-            tdA.innerHTML = `<button class="btn-delete-row" onclick="deleteRow(${idx})">🗑️ Eliminar</button>`;
-            tr.appendChild(tdA);
-            
-            dataBody.appendChild(tr);
-        });
+        } else {
+            // Excel Siesa (como antes)
+            let headers = Object.keys(parsedData[0] || {});
+            parsedData.forEach((row, idx) => {
+                const tr = document.createElement('tr');
+                headers.forEach(header => {
+                    const td = document.createElement('td');
+                    td.textContent = row[header] !== undefined ? row[header] : "";
+                    tr.appendChild(td);
+                });
+                // Acciones
+                const tdA = document.createElement('td');
+                tdA.innerHTML = `<button class="btn-delete-row" onclick="deleteRow(${idx})">🗑️ Eliminar</button>`;
+                tr.appendChild(tdA);
+
+                dataBody.appendChild(tr);
+            });
+        }
     }
 
     updateErrorMessage();
@@ -438,8 +683,6 @@ function updateDownloadButtons() {
 /* ========================================
    FUNCIÓN AUXILIAR PARA DESCARGAS
    (compatible con file://)
-   Usa data URI en vez de blob URL para
-   evitar el bloqueo de Chrome en file://
    ======================================== */
 function arrayToBase64(uint8Array) {
     let binary = '';
@@ -528,7 +771,7 @@ function downloadExcel() {
 function downloadSiesa() {
     if (hasErrors || parsedData.length === 0) return;
 
-    if (isExcelMode) {
+    if (isExcelMode && excelType === 'siesa') {
        alert("El archivo subido ya tiene el formato Siesa.");
        return;
     }
@@ -598,12 +841,12 @@ function downloadPlano() {
     lineas.push("000000100000001001");
 
     if (isExcelMode) {
-        // Generar plano a partir de Excel Siesa
+        // Generar plano a partir de Excel (Simple transformado o Siesa)
         parsedData.forEach((row, index) => {
             let consecutivo = (index + 2).toString();
-            let linea = consecutivo.padStart(7, "0"); // consecutivo de 7 dígitos
-            linea += "0"; // cero fijo
-            linea += "63400020011"; // bloque fijo
+            let linea = consecutivo.padStart(7, "0");
+            linea += "0";
+            linea += "63400020011";
 
             linea += row["Código del proveedor"] || "";
             linea = linea.padEnd(34, " ");
@@ -625,15 +868,15 @@ function downloadPlano() {
 
             linea += row["DATO 1"] || "";
             linea = linea.padEnd(140, " ");
-            
+
             linea += row["DATO 2"] || "";
             linea = linea.padEnd(190, " ");
-            
+
             linea += row["DATO 3"] || "";
             linea = linea.padEnd(240, " ");
-            
+
             linea += row["DATO 4"] || "";
-            
+
             while (linea.length < 340) linea += " ";
             linea += row["DATO 6"] || "";
 
@@ -645,7 +888,7 @@ function downloadPlano() {
         });
 
     } else {
-        // Generar plano a partir de TXT
+        // Generar plano a partir de TXT (SIN CAMBIOS)
         parsedData.forEach((item, index) => {
             const bancoInfo = bancoSiesaData[item.banco] || { banco: 'ERROR', dato3: '000000000' };
 
@@ -688,15 +931,15 @@ function downloadPlano() {
 
             linea += item.numeroDocumento;
             linea = linea.padEnd(140, " ");
-            
+
             linea += dato2;
             linea = linea.padEnd(190, " ");
-            
+
             linea += bancoInfo.dato3;
             linea = linea.padEnd(240, " ");
-            
+
             linea += item.noCuenta;
-            
+
             while (linea.length < 340) linea += " ";
             linea += dato6;
 
@@ -725,6 +968,7 @@ function clearData() {
     dataBody.innerHTML = '';
     parsedData = [];
     hasErrors = false;
+    excelType = null;
 
     btnProcesar.disabled = true;
     btnCancelar.disabled = true;
@@ -735,7 +979,7 @@ function clearData() {
 
     downloadButtons.style.display = 'none';
     errorMessage.style.display = 'none';
-    
+
     // Reset table headers back to default TXT headers
     const dataHead = document.getElementById('dataHead');
     if(dataHead) {
