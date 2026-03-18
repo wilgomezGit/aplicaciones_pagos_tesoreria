@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formato SIESA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+		<!-- Botón para ir a la página principal -->
+		<button id="homeButton" class="btn btn-home" onclick="goToHome()">&laquo Pagina Inicio</button>
+
+        <h1>Procesar Archivo | Formato SIESA</h1>
+
+        <!-- Sección de carga del archivo -->
+        <div class="file-container">
+            <label class="file-label">
+			       📂 Elegir archivos
+			       <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
+            </label>
+             <div class="file-name" id="fileCount">
+			                No hay archivos seleccionados
+            </div>
+
+             <div id="loader" style="display:none; font-weight:bold; margin-bottom:10px;">
+					    Procesando archivo...
+		</div>
+
+        </div>
+
+        <!-- Botones con espacio adecuado -->
+        <div class="buttons">
+            <button id="processButton" class="btn" disabled>Aceptar</button>
+			<button id="exportButton" class="btn" disabled>Exportar a Excel</button>
+			<button id="cancelButton" class="btn btn-danger">Cancelar</button>
+        </div>
+
+        <h2>Datos Procesados</h2>
+        <div class="table-container">
+            <table id="dataTable" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Documento<br>Proveedor</th>
+                        <th>Sucursal<br>Proveedor</th>
+                        <th>Codigo<br>Banco1</th>
+                        <th>Número Cuenta</th>
+                        <th>Tipo Cuenta<br>A/C</th>
+                        <th>Formato</th>
+                        <th>Forma<br>Pago</th>
+                        <th>Cuenta<br>Por Defecto</th>
+                        <th>Documento<br>DATO 1</th>
+                        <th>DATO 2</th>
+                        <th>Codigo Banco2<br>DATO 3</th>
+                        <th>No. Cuenta<br>DATO 4</th>
+                        <th>DATO 5</th>
+                        <th>DATO 6</th>
+                        <th>DATO 7</th>
+                        <th>DATO 8</th>
+                    </tr>
+                </thead>
+                <tbody id="dataBody">
+                    <!-- Aquí se mostrarán los datos procesados -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>Copyright © | Popayán 2025</p>
+            <p>Tesorería Comfacauca</p>
+            <p class="signature">Desarrollo: Wilmar Andrés Gómez</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.2/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

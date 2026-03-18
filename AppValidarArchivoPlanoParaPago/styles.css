@@ -1,0 +1,229 @@
+/* Estilos Generales */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 30px;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-image: url('imagen/fondo.jpg'); /* Ajusta según sea necesario */
+    background-repeat: repeat;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+/* Contenedor principal */
+.container {
+    width: 100%;
+    max-width: 1000px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Contenedor de carga del archivo */
+/* ==========================
+   SECCIÓN ARCHIVO MODERNA
+   ========================== */
+
+.file-container {
+    width: 50%;
+    background: #f8f9fa;
+    border: 2px dashed #3498db;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+}
+
+.file-container:hover {
+    box-shadow: 0 0 15px rgba(52, 152, 219, 0.4);
+}
+
+.file-label {
+    display: inline-block;
+    background: linear-gradient(135deg, #007bff, #00c6ff);
+    color: #ffffff;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.file-label:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
+}
+
+.file-label input {
+    display: none;
+}
+
+.file-name {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #555;
+    font-style: italic;
+}
+
+
+.file-name {
+    margin-top: 10px;
+    font-style: italic;
+    color: #666;
+}
+
+/* Botones */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    width: 160px;
+    transition: background-color 0.3s;
+}
+
+button:disabled {
+    background-color: #CCCCCC;
+    cursor: not-allowed;
+}
+
+#processButton {
+    background-color: #28a745;
+}
+
+#clearButton {
+    background-color: #dc3545;
+}
+
+button:hover:not(:disabled) {
+    background-color: #218838;
+}
+
+#clearButton:hover:not(:disabled) {
+    background-color: #c82333;
+}
+
+/* Resultados */
+.output {
+    margin-top: 20px;
+    white-space: pre-wrap;
+    text-align: left;
+    background: #f8f9fa;
+    padding: 15px;
+    width: 90%;
+    border-radius: 5px;
+    min-height: 120px;
+    max-width: 1200px;
+    overflow-x: auto;
+    font-size: 15px;
+    line-height: 1.8;
+    border: 1px solid #ccc;
+}
+
+/* Estilo de resaltado */
+.highlight {
+    font-weight: bold;
+    color: #d9534f;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Botón de regreso */
+.btn-home {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 10px;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-home:hover {
+    background-color: #45a049;
+}
+
+/* Mensajes de validación */
+#validationMessage, .success-message, .error-message {
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.success-message {
+    color: #28a745;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.error-message {
+    color: #d9534f;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+footer {
+    background-color: #f1f1f1;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    font-size: 13px;
+    font-style: italic;
+    position: relative;
+    margin-top: auto; /* empuja hacia abajo */
+}
+
+/* Línea de separación degradada azul */
+footer::before {
+    content: "";
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(to right, transparent, #3498db, #00b8d9, transparent);
+    margin-bottom: 6px;
+    border-radius: 2px;
+}
+
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+footer p {
+    margin: 0;
+    color: #333;
+}
