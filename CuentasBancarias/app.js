@@ -999,8 +999,43 @@ function clearData() {
 }
 
 /* ========================================
+   DRAG & DROP
+   ======================================== */
+
+const dropZone = document.getElementById("dropZone");
+
+dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZone.style.borderColor = "#28a745";
+    dropZone.style.background = "#eafaf1";
+});
+
+dropZone.addEventListener("dragleave", () => {
+    dropZone.style.borderColor = "#3498db";
+    dropZone.style.background = "#f8f9fa";
+});
+
+dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+
+    dropZone.style.borderColor = "#3498db";
+    dropZone.style.background = "#f8f9fa";
+
+    const files = e.dataTransfer.files;
+
+    if (files.length > 0) {
+        fileInput.files = files;
+
+        fileNameDiv.textContent = files[0].name;
+        btnProcesar.disabled = false;
+        btnCancelar.disabled = false;
+    }
+});
+
+/* ========================================
    VOLVER AL INICIO
    ======================================== */
 function goToHome() {
     window.location.href = "../index.html";
 }
+
