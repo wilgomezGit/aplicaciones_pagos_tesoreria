@@ -359,6 +359,18 @@ footer p {
     color: #333;
 }
 
+/* DRAG & DROP EFECTO */
+#dropZone {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#dropZone.drag-active {
+    border-color: #28a745;
+    background: #eafaf1;
+    transform: scale(1.02);
+}
+
 /* ========================================
    RESPONSIVE
    ======================================== */
